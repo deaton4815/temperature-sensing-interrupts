@@ -5,21 +5,27 @@ class OneSecondTimer
 {
     private:
 
+        // timer setup
         FspTimer m_timer;
+        timer_mode_t m_mode = TIMER_MODE_PERIODIC;
         uint8_t m_type = GPT_TIMER;
         int8_t m_channel;
-
-        const float m_rate_MHz = 1.0;
-
+        float m_rate_Hz = 1.0;
+        float m_duty = 0.0;
+        
         const int m_ledPin = LED_BUILTIN;
 
-        volatile bool m_tickFlag = false;
+        // callback
+        volatile uint32_t m_count = 0;
 
-        bool beginTimer();
+        static void timerCallback(timer_callback_args_t *p_args);
+
         bool setTimerChannel();
 
     public:
 
-        OneSecondTimer();
+        OneSecondTimer() = default;
+
+        bool beginTimer();        
 
 };
