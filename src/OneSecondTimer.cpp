@@ -9,6 +9,11 @@ void OneSecondTimer::timerCallback(timer_callback_args_t *p_args)
 
 bool OneSecondTimer::beginTimer()
 {
+    if (m_started)
+    {
+        return true;
+    }
+
     if (!setTimerChannel())
     {
         return false;
@@ -19,6 +24,14 @@ bool OneSecondTimer::beginTimer()
         return false;
     }
 
+    if (!m_timer.setup_overflow_irq() || !m_timer.open() || !m_timer.start())
+    {
+        m_timer.end();   // release the channel
+        return false;
+    }
+
+    m_started = true;
+    return m_started;
 }
 
 bool OneSecondTimer::setTimerChannel()
@@ -39,3 +52,5 @@ bool OneSecondTimer::setTimerChannel()
     }
     return true;
 }
+
+uint32_t OneSecondTimer::getCount(){ return m_count; }
