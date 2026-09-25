@@ -1,18 +1,53 @@
 #include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
+#include <cstdint>
 
+#include "OneSecondTimer.h"
+
+namespace
+{
+  OneSecondTimer gptTimer;
+  constexpr uint8_t LED_PIN = 13;
+  constexpr uint32_t PULSE_MS = 50;
+  uint32_t pulseStart = 0;
+  bool pulsing = false;
+
+  uint32_t count = 0;
+  static uint32_t lastPrint = 0;
+}
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, LOW); // start with pin off
+
+  Serial.begin(115200);
+
+  if (!gptTimer.beginTimer())
+  {
+    Serial.println("[ERROR] Timer did not start");
+  }
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
+  uint32_t countNew = gptTimer.getCount();
+  if (count != countNew)
+  {
+    count = countNew;
+    digitalWrite(LED_PIN, HIGH);
+    pulseStart = millis();
+    pulsing = true;
+  }
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  if (pulsing && (millis() - pulseStart >= PULSE_MS))
+  {
+      digitalWrite(LED_PIN, LOW);
+      pulsing = false;
+  }
+
+if (millis() - lastPrint >= 1000)
+{
+    lastPrint = millis();
+    Serial.print("count=");
+    Serial.println(gptTimer.getCount());
+}  
+
 }
