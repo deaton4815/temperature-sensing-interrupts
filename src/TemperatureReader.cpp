@@ -3,30 +3,35 @@
 void TemperatureReader::setup()
 {
     analogReference(AR_INTERNAL);
-    analogReadResolution(10); 
+    analogReadResolution(10);
 }
 
-float TemperatureReader::readTemperature()
+float TemperatureReader::readTemperature() const
 {
-    return celsius2Farenheit(mV2Celsius(analog2mV(getAnalogReading())));
+    return Calibration::getCorrectedDegreesF(celsius2Fahrenheit(mV2Celsius(analog2mV(getAveragedAnalogReading()))));
 }
 
-int TemperatureReader::getAnalogReading()
+float TemperatureReader::getAveragedAnalogReading() const
 {
-    return analogRead(m_sensorPin);
+    long sum = 0;
+    for (int i = 0; i < m_numSamples; i++)
+    {
+        sum += analogRead(m_sensorPin);
+    }
+    return static_cast<float>(sum) / m_numSamples;
 }
 
-float TemperatureReader::analog2mV(int a)
+float TemperatureReader::analog2mV(float a) const
 {
     return a * m_aRef_voltage / m_maxReading * 1000.0f;
 }
 
-float TemperatureReader::mV2Celsius(float mv)
+float TemperatureReader::mV2Celsius(float mv) const
 {
     return (mv - 500) / 10;
 }
 
-float TemperatureReader::celsius2Farenheit(float c)
+float TemperatureReader::celsius2Fahrenheit(float c) const
 {
     return (c * 9 / 5) + 32;
 }

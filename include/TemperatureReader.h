@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "Calibration.h"
 
 class TemperatureReader
 {
@@ -10,15 +11,14 @@ class TemperatureReader
         const int m_sensorPin = A0;
         const float m_maxReading = 1023.0f;
         const float m_aRef_voltage = 1.5f;
+        static constexpr int m_numSamples = 16;
 
-        int getAnalogReading();
-        float analog2mV(int a);
-        float mV2Celsius(float mv);
-        float celsius2Farenheit(float c);
+        float getAveragedAnalogReading() const;
+        float analog2mV(float) const;
+        float mV2Celsius(float) const;
+        float celsius2Fahrenheit(float) const;
 
     public:
-        
         void setup();
-        float readTemperature();
-
+        float readTemperature()  const;
 };
