@@ -20,6 +20,8 @@ void setup() {
 
   Serial.begin(115200);
 
+  analogReference(AR_INTERNAL);
+
   if (!gptTimer.beginTimer())
   {
     Serial.println("[ERROR] Timer did not start");
@@ -35,9 +37,13 @@ void loop() {
     pulseStart = millis();
     pulsing = true;
 
-    int rawTemp = analogRead(A0);
+    int reading = analogRead(A0);
+    float volts = reading * 1.5 / 1023.0;
+    float mv = 1000 * volts;
+    float degreesC = (mv - 500)/10;
+    float degreesF = (degreesC * 9/5) + 32;
     Serial.print("\n");
-    Serial.println(rawTemp);
+    Serial.println(degreesF);
   }
 
   if (pulsing && (millis() - pulseStart >= PULSE_MS))
