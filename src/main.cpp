@@ -3,6 +3,7 @@
 #include <cstdint>
 
 #include "OneSecondTimer.h"
+#include "TemperatureReader.h"
 
 namespace
 {
@@ -13,7 +14,9 @@ namespace
   bool pulsing = false;
 
   uint32_t count = 0;
-  static uint32_t lastPrint = 0;
+
+  //temperature
+  TemperatureReader temperature;
 }
 void setup() {
   pinMode(LED_PIN, OUTPUT);
@@ -25,6 +28,8 @@ void setup() {
   {
     Serial.println("[ERROR] Timer did not start");
   }
+
+  temperature.setup();
 }
 
 void loop() {
@@ -35,6 +40,10 @@ void loop() {
     digitalWrite(LED_PIN, HIGH);
     pulseStart = millis();
     pulsing = true;
+
+    float degreesF = temperature.readTemperature();
+    Serial.print("\n");
+    Serial.println(degreesF);
   }
 
   if (pulsing && (millis() - pulseStart >= PULSE_MS))
@@ -42,12 +51,4 @@ void loop() {
       digitalWrite(LED_PIN, LOW);
       pulsing = false;
   }
-
-if (millis() - lastPrint >= 1000)
-{
-    lastPrint = millis();
-    Serial.print("count=");
-    Serial.println(gptTimer.getCount());
-}  
-
 }
