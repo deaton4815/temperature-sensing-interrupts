@@ -34,5 +34,5 @@ class OneSecondTimer
         bool beginTimer();
         
         uint32_t getCount();
-
+        uint32_t getTime();
 };

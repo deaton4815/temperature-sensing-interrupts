@@ -6,6 +6,8 @@
 #include "TemperatureReader.h"
 #include "TimerLED.h"
 
+#include "Counter.h"
+
 namespace
 {
   OneSecondTimer gptTimer;
@@ -17,6 +19,9 @@ namespace
 
   //timer LED signal
   TimerLED timerLED;
+
+  // Counter
+  Counter counter;
 }
 
 void setup() {
@@ -32,15 +37,14 @@ void setup() {
 }
 
 void loop() {
-  uint32_t countNew = gptTimer.getCount();
-  if (count != countNew)
+  bool flag = counter.checkCount(gptTimer.getCount());
+  if (flag)
   {
-    count = countNew;
-
     float degreesF = temperature.readTemperature();
+    float time = gptTimer.getTime();
     Serial.print("\n");
     Serial.println(degreesF);
+    Serial.println(time);
   }
-
   timerLED.checkPulse();
 }
