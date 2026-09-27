@@ -3,10 +3,10 @@
 class Calibration
 {
     private:
-        static constexpr float DEG_A = 32.0f;
-        static constexpr float ERROR_DEG_A = 0.0f;
-        static constexpr float DEG_B = 212.0f;
-        static constexpr float ERROR_DEG_B = 0.0f;
+        static constexpr float DEG_A = 71.6f;
+        static constexpr float ERROR_DEG_A = 12.49f;
+        static constexpr float DEG_B = 31.1f;
+        static constexpr float ERROR_DEG_B = 11.49f;
 
         static constexpr float SLOPE =
             (DEG_A >= DEG_B)
