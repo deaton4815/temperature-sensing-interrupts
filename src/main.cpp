@@ -3,6 +3,7 @@
 #include <cstdint>
 
 #include "OneSecondTimer.h"
+#include "TemperatureReader.h"
 
 namespace
 {
@@ -13,6 +14,9 @@ namespace
   bool pulsing = false;
 
   uint32_t count = 0;
+
+  //temperature
+  TemperatureReader temperature;
 }
 void setup() {
   pinMode(LED_PIN, OUTPUT);
@@ -20,12 +24,12 @@ void setup() {
 
   Serial.begin(115200);
 
-  analogReference(AR_INTERNAL);
-
   if (!gptTimer.beginTimer())
   {
     Serial.println("[ERROR] Timer did not start");
   }
+
+  temperature.setup();
 }
 
 void loop() {
@@ -37,11 +41,7 @@ void loop() {
     pulseStart = millis();
     pulsing = true;
 
-    int reading = analogRead(A0);
-    float volts = reading * 1.5 / 1023.0;
-    float mv = 1000 * volts;
-    float degreesC = (mv - 500)/10;
-    float degreesF = (degreesC * 9/5) + 32;
+    float degreesF = temperature.readTemperature();
     Serial.print("\n");
     Serial.println(degreesF);
   }
