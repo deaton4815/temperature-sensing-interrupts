@@ -22,6 +22,8 @@ namespace
 
   // Counter
   Counter counter;
+
+  bool firstFlag = true;
 }
 
 void setup() {
@@ -40,11 +42,18 @@ void loop() {
   bool flag = counter.checkCount(gptTimer.getCount());
   if (flag)
   {
+    if (firstFlag){
+      Serial.println("time_s,temp_F");
+      firstFlag = false;
+    }
+
+    timerLED.startPulse();
     float degreesF = temperature.readTemperature();
-    float time = gptTimer.getTime();
-    Serial.print("\n");
+    float elapsedSeconds = gptTimer.getTime();
+
+    Serial.print(elapsedSeconds);
+    Serial.print(",");
     Serial.println(degreesF);
-    Serial.println(time);
   }
   timerLED.checkPulse();
 }
