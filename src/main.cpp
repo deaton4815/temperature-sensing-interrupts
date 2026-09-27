@@ -4,51 +4,56 @@
 
 #include "OneSecondTimer.h"
 #include "TemperatureReader.h"
+#include "TimerLED.h"
+
+#include "Counter.h"
 
 namespace
 {
   OneSecondTimer gptTimer;
-  constexpr uint8_t LED_PIN = 13;
-  constexpr uint32_t PULSE_MS = 50;
-  uint32_t pulseStart = 0;
-  bool pulsing = false;
 
   uint32_t count = 0;
 
   //temperature
   TemperatureReader temperature;
-}
-void setup() {
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, LOW); // start with pin off
 
+  //timer LED signal
+  TimerLED timerLED;
+
+  // Counter
+  Counter counter;
+
+  bool firstFlag = true;
+}
+
+void setup() {
   Serial.begin(115200);
+
+  temperature.setup();
+  timerLED.setup();
 
   if (!gptTimer.beginTimer())
   {
     Serial.println("[ERROR] Timer did not start");
   }
-
-  temperature.setup();
 }
 
 void loop() {
-  uint32_t countNew = gptTimer.getCount();
-  if (count != countNew)
+  bool flag = counter.checkCount(gptTimer.getCount());
+  if (flag)
   {
-    count = countNew;
-    digitalWrite(LED_PIN, HIGH);
-    pulseStart = millis();
-    pulsing = true;
+    if (firstFlag){
+      Serial.println("time_s,temp_F");
+      firstFlag = false;
+    }
 
+    timerLED.startPulse();
     float degreesF = temperature.readTemperature();
-    Serial.print("\n");
+    float elapsedSeconds = gptTimer.getTime();
+
+    Serial.print(elapsedSeconds);
+    Serial.print(",");
     Serial.println(degreesF);
   }
-
-  if (pulsing && (millis() - pulseStart >= PULSE_MS))
-  {
-      digitalWrite(LED_PIN, LOW);
-      pulsing = false;
-  }
+  timerLED.checkPulse();
 }

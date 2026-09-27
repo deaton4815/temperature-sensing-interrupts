@@ -54,3 +54,4 @@ bool OneSecondTimer::setTimerChannel()
 }
 
 uint32_t OneSecondTimer::getCount(){ return m_count; }
+uint32_t OneSecondTimer::getTime(){ return m_count / m_rate_Hz; }
