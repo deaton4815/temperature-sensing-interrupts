@@ -8,6 +8,7 @@ void TimerLED::setup()
 
 void TimerLED::startPulse()
 {
+    // turn the LED on and remember when the pulse started
     digitalWrite(LED_PIN, HIGH);
     m_pulseStart = millis();
     m_pulsing = true;
@@ -15,6 +16,7 @@ void TimerLED::startPulse()
 
 void TimerLED::checkPulse()
 {
+    // non-blocking. turn the LED back off once PULSE_MS has passed
     if (m_pulsing && (millis() - m_pulseStart >= PULSE_MS))
     {
         digitalWrite(LED_PIN, LOW);

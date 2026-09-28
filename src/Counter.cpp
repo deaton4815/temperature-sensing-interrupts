@@ -2,6 +2,7 @@
 
 bool Counter::checkCount(uint32_t count)
 {
+   // trigger on a NEW multiple of COUNT_INTERVAL
    if (count != m_countPrev && count % COUNT_INTERVAL == 0)
    {
     m_countPrev = count;
